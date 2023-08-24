@@ -2,17 +2,17 @@ import cv2 as cv
 from video_processor import process_video
 from music_generator import create_midi_composition, play_note
 
+
 def main():
     # initialize the video capture (webcam)
     capture = cv.VideoCapture(0)
 
     # Set the duration of the capture in seconds
-    capture_duration = 10  # for example, 10 seconds
+    capture_duration = 1  # for example, 10 seconds
 
     # Calculate the number of frames to capture based on the frame rate
     frame_rate = int(capture.get(cv.CAP_PROP_FPS))
     total_frames = frame_rate * capture_duration
-
     frame_count = 0
 
     while frame_count < total_frames:
