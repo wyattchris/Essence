@@ -2,6 +2,7 @@ import mido as mido
 import pygame as pygame
 from mido import MidiFile, MidiTrack, Message
 import numpy as np
+import fluidsynth as fs
 
 def stereo_sawtooth_wave(duration, frequency, sample_rate):
     t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
