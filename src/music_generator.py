@@ -1,46 +1,43 @@
-import mido as mido
-import pygame as pygame
-from mido import MidiFile, MidiTrack, Message
 import numpy as np
+import soundfile as sf
+import subprocess
 
-def stereo_sawtooth_wave(duration, frequency, sample_rate):
-    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
-    left_wave = 2 * (t * frequency - np.floor(t * frequency + 0.5))
-    right_wave = left_wave * 0.5  # Generate a stereo waveform with a quieter right channel
-    return np.column_stack((left_wave, right_wave))
+def generate_chord(scale, chord_progression, chord_duration):
+    combined_sound = np.zeros(int(chord_duration * 44100))
 
-def create_midi_composition(main_frequency, harmony_intervals):
-    mid = MidiFile()
-    track = MidiTrack()
-    mid.tracks.append(track)
+    for note in chord_progression:
+        frequency = 440 * (2 ** ((note - 69) / 12))
+        note_sound = np.sin(2 * np.pi * frequency * np.arange(0, chord_duration, 1/44100))
+        combined_sound += note_sound
 
-    # Add main melody note
-    track.append(Message('note_on', note=60, velocity=64, time=0))
-    track.append(Message('note_off', note=60, velocity=64, time=500))
+    return combined_sound
 
-    # Add harmonies based on intervals
-    for interval in harmony_intervals:
-        harmony_note = round(main_frequency * interval) % 128  # Wrap within 0-127 range
-        track.append(Message('note_on', note=harmony_note, velocity=64, time=0))
-        track.append(Message('note_off', note=harmony_note, velocity=64, time=500))
+def apply_reverb(input_file, output_file):
+    subprocess.run(["sox", input_file, output_file, "reverb", "50"])
 
-    return mid
+def play_audio(audio_file):
+    processed_sound, sr = sf.read(audio_file)
+    sf.play(processed_sound, sr)
 
-def play_note(note_number, velocity, duration):
-    midi_note = note_number + 21  # Adjust to the MIDI note range
-    frequency = 440 * (2 ** ((midi_note - 69) / 12))
-    pygame.init()
-    pygame.mixer.init()
+def play_music(main_frequency):
+    scale = [main_frequency, main_frequency + 2, main_frequency + 3, main_frequency + 5, main_frequency + 7, main_frequency + 8, main_frequency + 10]
+    chord_progressions = [
+        [scale[0], scale[2], scale[4]],  # I chord
+        [scale[1], scale[3], scale[5]],  # ii chord
+        [scale[2], scale[4], scale[6]],  # iii chord
+    ]
 
-    # Generate a stereo waveform
-    stereo_waveform = stereo_sawtooth_wave(duration, frequency, 44100)
+    # Generate and save the chord as a WAV file
+    chord_duration = 2.0  # Longer duration for a more musical feel
+    chord_sound = generate_chord(scale, chord_progressions[0], chord_duration)
+    sf.write("output.wav", chord_sound, 44100)
 
-    # Create a stereo Sound object
-    sound = pygame.mixer.Sound(stereo_waveform)
+    # Apply reverb using SoX
+    apply_reverb("output.wav", "output_with_reverb.wav")
 
-    sound.set_volume(velocity / 127.0)
-    sound.play()
+    # Play the processed audio using soundfile
+    play_audio("output_with_reverb.wav")
 
-    pygame.time.wait(int(duration * 1000))  # Convert duration to milliseconds
-    pygame.mixer.quit()
-    pygame.quit()
+# For testing
+if __name__ == "__main__":
+    play_music(440)  # Play a note of 440 Hz for testing

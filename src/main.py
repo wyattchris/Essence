@@ -1,6 +1,6 @@
 import cv2 as cv
 from video_processor import process_video
-from music_generator import create_midi_composition, play_note
+from music_generator import play_music
 
 def main():
     # initialize the video capture (webcam)
@@ -23,18 +23,11 @@ def main():
         # process the video frame and get the average brightness
         average_brightness = process_video(frame)
 
-        # calculate main frequency and harmony intervals based on brightness
+        # calculate main frequency based on brightness
         main_frequency = 60 + int(average_brightness)  # Adjust as needed
-        harmony_intervals = [1.5, 0.5]  # Adjust intervals as needed
 
-        # generate MIDI composition
-        midi_composition = create_midi_composition(main_frequency, harmony_intervals)
-
-        # play MIDI composition notes
-        play_note(main_frequency, 64, 0.5)  # Play main melody
-        for interval in harmony_intervals:
-            harmony_note = round(main_frequency * interval) % 128
-            play_note(harmony_note, 64, 0.5)  # Play harmony notes
+        # play music based on the main frequency
+        play_music(main_frequency)
 
         # display the webcam feed
         cv.imshow("webcam! :3", frame)
