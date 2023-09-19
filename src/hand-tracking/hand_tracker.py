@@ -16,6 +16,7 @@ class hand_tracker():
                                         self.detection_con, self.track_con)
         self.mp_draw = mp.solutions.drawing_utils
 
+    # find hands and draw landmarks on image
     def hands_finder(self, image, draw=True):
         image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
         self.results = self.hands.process(image_rgb)
@@ -25,7 +26,8 @@ class hand_tracker():
                 if draw:
                     self.mp_draw.draw_landmarks(image, hand_lms, self.mp_hands.HAND_CONNECTIONS)
         return image
-
+    
+    # find position of landmarks
     def position_finder(self, image, hand_no=0, draw=True):
         lm_list = []
         if self.results.multi_hand_landmarks:
