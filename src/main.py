@@ -1,7 +1,6 @@
 import cv2 as cv
 import time
 from video_processor import video_brightness
-from music_generator import create_midi_composition, play_note
 from synth import createSynth
 from video_processor import pixel_info
 import pygame
@@ -19,7 +18,7 @@ def main():
     
 
     # Set the duration of the capture in seconds
-    capture_duration = 0.1  # for example, 10 seconds
+    capture_duration = 10  # for example, 10 seconds
 
     # Calculate the number of frames to capture based on the frame rate
     frame_rate = int(capture.get(cv.CAP_PROP_FPS))
@@ -33,7 +32,7 @@ def main():
 
         # process the video frame and get the average brightness
         average_brightness = video_brightness(frame)
-
+        print(average_brightness)
         face = pixel_info(frame)
         # calculate main frequency and harmony intervals based on brightness
         
@@ -41,10 +40,10 @@ def main():
         harmony_intervals = [1.5, 0.5]  # Adjust intervals as needed
 
         # generate MIDI composition
-        midi_composition = create_midi_composition(main_frequency, harmony_intervals)
-        n
+        midi_composition = sineGuy.create_midi_composition(main_frequency, harmony_intervals)
+        
         # play MIDI composition notes
-        sineGuy.sine(10, 64, 0.5)  # Play main melody
+        sineGuy.sine(main_frequency, 0.1)  # Play main melody
         '''for interval in harmony_intervals:
             harmony_note = round(main_frequency * interval) % 128
             play_note(harmony_note, 64, 0.5)  # Play harmony notes'''

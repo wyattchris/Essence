@@ -75,7 +75,7 @@ class Instrument:
         pygame.quit()
 
 
-    def create_midi_composition(main_frequency, harmony_intervals):
+    def create_midi_composition(self, main_frequency, harmony_intervals):
         mid = MidiFile()
         track = MidiTrack()
         mid.tracks.append(track)
@@ -99,5 +99,3 @@ class Instrument:
         except:
             return False
     
-nikIn = Instrument(44100,16)
-nikIn.sine(440, duration = 1)
